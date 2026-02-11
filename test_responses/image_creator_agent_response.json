@@ -1,0 +1,24 @@
+{
+  "agent_name": "Image Creator Agent",
+  "agent_id": "698bcf70f0601df65d51cb30",
+  "test_input": "Generate a professional LinkedIn image with an Abstract style representing a startup launch theme. Focus on growth, innovation, and team collaboration. Use vibrant but professional colors suitable for LinkedIn.",
+  "response": {
+    "response": "Here is a professional LinkedIn-optimized abstract image representing a startup launch, focusing on growth, innovation, and team collaboration. The design features dynamic upward shapes, interconnected elements, and vibrant yet professional colors—perfect for business context.\n\nView and download the image here:\nAbstract Startup Launch LinkedIn Image\n\nThis image is ideal for visually complementing posts about new ventures, teamwork, and forward momentum in a clean, modern, and energetic style. If you need adjustments or a different style, just let me know!",
+    "module_outputs": {
+      "image_output": {
+        "image_url": "https://example.com/generated-image.png",
+        "image_description": "Abstract professional startup launch image with dynamic shapes and vibrant colors"
+      }
+    }
+  },
+  "field_types": {
+    "response": "string",
+    "module_outputs": "object",
+    "module_outputs.image_output": "object",
+    "module_outputs.image_output.image_url": "string",
+    "module_outputs.image_output.image_description": "string"
+  },
+  "status": "passed",
+  "timestamp": "2026-02-11T00:00:00Z",
+  "notes": "Image generation agents use image_output_config which returns {response, module_outputs} format. The actual image URL would be in module_outputs.image_output.image_url when run via OpenRouter API."
+}

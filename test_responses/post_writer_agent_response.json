@@ -1,0 +1,37 @@
+{
+  "agent_name": "Post Writer Agent",
+  "agent_id": "698bcf5971cc26621aa010f0",
+  "test_input": "Create a LinkedIn post about launching my new startup next week. Tone: Inspirational. The startup is an AI-powered productivity tool for remote teams.",
+  "response": {
+    "status": "success",
+    "result": {
+      "summary": "Inspirational LinkedIn post announcing the upcoming launch of an AI productivity startup for remote teams.",
+      "data": {
+        "post_text": "Big dreams start with small steps—and next week marks an incredible milestone. 🚀\n\nI'm thrilled to announce the upcoming launch of my new startup: an AI-powered productivity tool designed for remote teams.\n\nThe journey to this point has been filled with late nights, challenge after challenge, and an unwavering belief that remote work can be more seamless, collaborative, and empowering for everyone.\n\nBuilt by a passionate team who truly understands the daily struggles and unique dynamics of remote environments, our tool tackles the obstacles that often slow remote teams down—from scattered tasks to communication gaps. Now, AI-driven insights and automation will help unlock new possibilities for focus, efficiency, and connection—no matter where your desk is in the world.\n\nThis isn't just about technology. It's about unlocking human potential, freeing up time for creativity, and enabling teams to achieve more, together.\n\n👉 Stay tuned for updates—and if you lead or work in a remote team, I'd love to connect and hear your biggest productivity challenges!\n\nLet's build the future of work—one task, conversation, and breakthrough at a time. #NextChapter\n\n#StartupLaunch #RemoteWork #Productivity #AI #Inspiration",
+        "character_count": 1247,
+        "tone": "Inspirational",
+        "hashtags": [
+          "#StartupLaunch",
+          "#RemoteWork",
+          "#Productivity",
+          "#AI",
+          "#Inspiration"
+        ]
+      }
+    },
+    "metadata": {
+      "agent_name": "Post Writer Agent",
+      "timestamp": "2024-06-18T08:40:00Z"
+    }
+  },
+  "field_types": {
+    "result.summary": "string",
+    "result.data": "object",
+    "result.data.post_text": "string",
+    "result.data.character_count": "number",
+    "result.data.tone": "string",
+    "result.data.hashtags": "array"
+  },
+  "status": "passed",
+  "timestamp": "2026-02-11T00:00:00Z"
+}

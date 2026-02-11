@@ -1,0 +1,36 @@
+{
+  "agent_name": "Content Coordinator",
+  "agent_id": "698bcf88f0601df65d51cb31",
+  "test_input": "Generate LinkedIn content for: Topic: Launching my new AI-powered productivity tool for remote teams. Tone: Inspirational. Image Style: Abstract.",
+  "response": {
+    "status": "success",
+    "result": {
+      "summary": "Inspirational LinkedIn post debuting a new AI productivity tool for remote teams, paired with an abstract, uplifting visual symbolizing technology-driven collaboration.",
+      "data": {
+        "linkedin_post": "Today marks a milestone in my journey—I'm thrilled to announce the launch of my new AI-powered productivity tool designed specifically for remote teams!\n\nWhen the world shifted to remote work, collaboration and productivity found new challenges. I saw talented teams struggle to stay aligned and organized, even as they worked tirelessly from different corners of the globe. This sparked a vision—to create an AI tool that not only streamlines workflows but truly *empowers* teams to reach their highest potential, no matter where they are.\n\nOur tool leverages the latest in artificial intelligence to automate repetitive tasks, surface insights from daily communications, and foster seamless collaboration. The goal? To give every team member more time for what matters: creative problem-solving, meaningful connections, and delivering results.\n\nI believe the future of work is not just remote, but *connected, intelligent, and human-centric*. With the right technology, we can make distributed teamwork more effective—and more fulfilling—than ever before.\n\nI'd love to hear from you:\nHow do you see AI changing the way your team works? What features would make a real difference for you?\n\nLet's start a conversation and redefine productivity together.\n\n#AI #RemoteWork #Productivity #Innovation #FutureOfWork",
+        "image_description": "Abstract visual representing AI-powered productivity for remote teams—dynamic interconnected shapes, vibrant energy flows symbolizing collaboration, innovation, and digital progress. Modern, uplifting color palette to evoke inspiration and technological advancement.",
+        "image_url": "https://url-shortner.studio.lyzr.ai/87e71c4e",
+        "tone_used": "Inspirational",
+        "style_used": "Abstract",
+        "coherence_notes": "The post text inspires and celebrates the transformative impact of AI on remote teamwork, focusing on empowerment and innovation. The abstract visual, with its dynamic shapes and energetic flows, perfectly complements this message by artistically depicting connectivity, progress, and the promise of AI-powered collaboration. The color palette and design evoke the intended sense of inspiration and forward momentum."
+      }
+    },
+    "metadata": {
+      "agent_name": "Content Coordinator",
+      "timestamp": "2024-06-17T19:43:20Z"
+    }
+  },
+  "field_types": {
+    "result.summary": "string",
+    "result.data": "object",
+    "result.data.linkedin_post": "string",
+    "result.data.image_description": "string",
+    "result.data.image_url": "string",
+    "result.data.tone_used": "string",
+    "result.data.style_used": "string",
+    "result.data.coherence_notes": "string"
+  },
+  "status": "passed",
+  "timestamp": "2026-02-11T00:00:00Z",
+  "notes": "Manager agent that coordinates both Post Writer and Image Creator agents. Returns combined output with linkedin_post text and image_url from sub-agents."
+}

@@ -1,0 +1,47 @@
+{
+  "agent_name": "Content Coordinator",
+  "agent_id": "698bcf88f0601df65d51cb31",
+  "agent_purpose": "Coordinates LinkedIn post and image generation for cohesive content packages",
+  "description": "Manager agent that delegates to sub-agents and aggregates LinkedIn content output",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "summary": "string",
+      "data": {
+        "linkedin_post": "string",
+        "image_description": "string",
+        "tone_used": "string",
+        "style_used": "string",
+        "coherence_notes": "string"
+      }
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "error",
+    "result": {
+      "summary": "No topic, tone, or image style preferences were provided.",
+      "data": {
+        "linkedin_post": "",
+        "image_description": "",
+        "tone_used": "",
+        "style_used": "",
+        "coherence_notes": "Unable to proceed with content creation due to lack of input details."
+      }
+    },
+    "metadata": {
+      "agent_name": "Content Coordinator",
+      "timestamp": "2024-06-09T10:54:24Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-11T00:41:13.065971",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "raw_text": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"summary\": \"Inspirational LinkedIn post debuting a new AI productivity tool for remote teams, paired with an abstract, uplifting visual symbolizing technology-driven collaboration.\",\n    \"data\": {\n      \"linkedin_post\": \"\ud83c\udf1f Today marks a milestone in my journey\u2014I'm thrilled to announce the launch of my new AI-powered productivity tool designed specifically for remote teams!\n\nWhen the world shifted to remote work, collaboration and productivity found new challenges. I saw talented teams struggle to stay aligned and organized, even as they worked tirelessly from different corners of the globe. This sparked a vision\u2014to create an AI tool that not only streamlines workflows but truly *empowers* teams to reach their highest potential, no matter where they are.\n\nOur tool leverages the latest in artificial intelligence to automate repetitive tasks, surface insights from daily communications, and foster seamless collaboration. The goal? To give every team member more time for what matters: creative problem-solving, meaningful connections, and delivering results.\n\nI believe the future of work is not just remote, but *connected, intelligent, and human-centric*. With the right technology, we can make distributed teamwork more effective\u2014and more fulfilling\u2014than ever before.\n\nI\u2019d love to hear from you:\nHow do you see AI changing the way your team works? What features would make a real difference for you?\n\nLet\u2019s start a conversation and redefine productivity together.\n\n#AI #RemoteWork #Productivity #Innovation #FutureOfWork\",\n      \"image_description\": \"Abstract visual representing AI-powered productivity for remote teams\u2014dynamic interconnected shapes, vibrant energy flows symbolizing collaboration, innovation, and digital progress. Modern, uplifting color palette to evoke inspiration and technological advancement.\",\n      \"image_url\": \"https://url-shortner.studio.lyzr.ai/87e71c4e\",\n      \"tone_used\": \"Inspirational\",\n      \"style_used\": \"Abstract\",\n      \"coherence_notes\": \"The post text inspires and celebrates the transformative impact of AI on remote teamwork, focusing on empowerment and innovation. The abstract visual, with its dynamic shapes and energetic flows, perfectly complements this message by artistically depicting connectivity, progress, and the promise of AI-powered collaboration. The color palette and design evoke the intended sense of inspiration and forward momentum.\"\n    }\n  },\n  \"metadata\": {\n    \"agent_name\": \"Content Coordinator\",\n    \"timestamp\": \"2024-06-17T19:43:20Z\"\n  }\n}"
+  },
+  "test_passed": false
+}

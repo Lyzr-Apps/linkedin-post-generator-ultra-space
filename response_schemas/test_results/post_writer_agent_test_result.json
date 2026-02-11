@@ -1,0 +1,32 @@
+{
+  "agent_name": "Post Writer Agent",
+  "agent_id": "698bcf5971cc26621aa010f0",
+  "test_message": "Create a LinkedIn post about launching my new startup next week. Tone: Inspirational. The startup is an AI-powered productivity tool for remote teams.",
+  "expected_purpose": "assistant",
+  "timestamp": "2026-02-11T00:39:39.600990",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "summary": "Inspirational LinkedIn post announcing the upcoming launch of an AI productivity startup for remote teams.",
+      "data": {
+        "post_text": "Big dreams start with small steps\u2014and next week marks an incredible milestone. \ud83d\ude80\n\nI\u2019m thrilled to announce the upcoming launch of my new startup: an AI-powered productivity tool designed for remote teams.\n\nThe journey to this point has been filled with late nights, challenge after challenge, and an unwavering belief that remote work can be more seamless, collaborative, and empowering for everyone.\n\nBuilt by a passionate team who truly understands the daily struggles and unique dynamics of remote environments, our tool tackles the obstacles that often slow remote teams down\u2014from scattered tasks to communication gaps. Now, AI-driven insights and automation will help unlock new possibilities for focus, efficiency, and connection\u2014no matter where your desk is in the world.\n\nThis isn\u2019t just about technology. It\u2019s about unlocking human potential, freeing up time for creativity, and enabling teams to achieve more, together.\n\n\ud83d\udc49 Stay tuned for updates\u2014and if you lead or work in a remote team, I\u2019d love to connect and hear your biggest productivity challenges!\n\nLet\u2019s build the future of work\u2014one task, conversation, and breakthrough at a time. #NextChapter\n\n#StartupLaunch #RemoteWork #Productivity #AI #Inspiration",
+        "character_count": 1247,
+        "tone": "Inspirational",
+        "hashtags": [
+          "#StartupLaunch",
+          "#RemoteWork",
+          "#Productivity",
+          "#AI",
+          "#Inspiration"
+        ]
+      }
+    },
+    "metadata": {
+      "agent_name": "Post Writer Agent",
+      "timestamp": "2024-06-18T08:40:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"summary\": \"Inspirational LinkedIn post announcing the upcoming launch of an AI productivity startup for remote teams.\",\n    \"data\": {\n      \"post_text\": \"Big dreams start with small steps\u2014and next week marks an incredible milestone. \ud83d\ude80\\n\\nI\u2019m thrilled to announce the upcoming launch of my new startup: an AI-powered productivity tool designed for remote teams.\\n\\nThe journey to this point has been filled with late nights, challenge after challenge, and an unwavering belief that remote work can be more seamless, collaborative, and empowering for everyone.\\n\\nBuilt by a passionate team who truly understands the daily struggles and unique dynamics of remote environments, our tool tackles the obstacles that often slow remote teams down\u2014from scattered tasks to communication gaps. Now, AI-driven insights and automation will help unlock new possibilities for focus, efficiency, and connection\u2014no matter where your desk is in the world.\\n\\nThis isn\u2019t just about technology. It\u2019s about unlocking human potential, freeing up time for creativity, and enabling teams to achieve more, together.\\n\\n\ud83d\udc49 Stay tuned for updates\u2014and if you lead or work in a remote team, I\u2019d love to connect and hear your biggest productivity challenges!\\n\\nLet\u2019s build the future of work\u2014one task, conversation, and breakthrough at a time. #NextChapter\\n\\n#StartupLaunch #RemoteWork #Productivity #AI #Inspiration\",\n      \"character_count\": 1247,\n      \"tone\": \"Inspirational\",\n      \"hashtags\": [\"#StartupLaunch\", \"#RemoteWork\", \"#Productivity\", \"#AI\", \"#Inspiration\"]\n    }\n  },\n  \"metadata\": {\n    \"agent_name\": \"Post Writer Agent\",\n    \"timestamp\": \"2024-06-18T08:40:00Z\"\n  }\n}"
+}

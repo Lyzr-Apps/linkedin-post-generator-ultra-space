@@ -1,0 +1,47 @@
+{
+  "agent_name": "Image Creator Agent",
+  "agent_id": "698bcf70f0601df65d51cb30",
+  "agent_purpose": "Generates professional LinkedIn-optimized images",
+  "description": "Visual content designer that creates LinkedIn-appropriate images matching post themes",
+  "response_schema": {
+    "status": "string (success|error)",
+    "result": {
+      "response": "string",
+      "action_taken": "string (optional)",
+      "data": "object (optional, any structured data)",
+      "suggestions": [
+        "string (optional)"
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string (ISO)"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "response": "I've completed the task you requested",
+      "action_taken": "Processed the input and generated output",
+      "data": {
+        "key": "value"
+      },
+      "suggestions": [
+        "You might also want to try X"
+      ]
+    },
+    "metadata": {
+      "agent_name": "Image Creator Agent",
+      "timestamp": "2025-01-15T10:30:00Z"
+    }
+  },
+  "is_actual_tested": false,
+  "test_timestamp": "2026-02-11T00:40:15.108322",
+  "test_message_used": "Hello, provide a sample response",
+  "raw_test_response": "Hello! Thank you for reaching out. To better assist you, could you please specify what type of LinkedIn post or content you'd like an image for? For example, let me know the post's topic, desired visual style (Minimal, Abstract, Illustrated, Photo-realistic), and any key themes or messages you'd like the image to complement.\n\nOnce you provide those details, I\u2019ll create a sample LinkedIn-optimized image tailored to your request. Looking forward to your input!",
+  "test_error": "Response not valid JSON: Expecting value: line 1 column 1 (char 0)",
+  "actual_test_response": {
+    "raw_text": "Here is a professional LinkedIn-optimized abstract image representing a startup launch, focusing on growth, innovation, and team collaboration. The design features dynamic upward shapes, interconnected elements, and vibrant yet professional colors\u2014perfect for business context.\n\nView and download the image here:\nAbstract Startup Launch LinkedIn Image\n\nThis image is ideal for visually complementing posts about new ventures, teamwork, and forward momentum in a clean, modern, and energetic style. If you need adjustments or a different style, just let me know!"
+  },
+  "test_passed": false
+}

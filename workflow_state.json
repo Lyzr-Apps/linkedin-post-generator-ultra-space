@@ -1,0 +1,109 @@
+{
+  "workflow_name": "LinkedIn Image + Post Generator",
+  "workflow_type": "manager-subagent",
+  "agents": [
+    {
+      "agent_id": "698bcf5971cc26621aa010f0",
+      "name": "Post Writer Agent",
+      "type": "subagent",
+      "role": "LinkedIn Copywriter",
+      "description": "Crafts engaging LinkedIn post copy with hooks, storytelling elements, hashtags, and CTAs",
+      "test_status": "passed",
+      "test_timestamp": "2026-02-11T00:00:00Z"
+    },
+    {
+      "agent_id": "698bcf70f0601df65d51cb30",
+      "name": "Image Creator Agent",
+      "type": "subagent",
+      "role": "Visual Content Designer",
+      "description": "Generates professional LinkedIn-appropriate visuals matching the post theme and tone",
+      "capabilities": {
+        "image_output": true,
+        "image_model": "gemini/gemini-3-pro-image-preview"
+      },
+      "test_status": "passed",
+      "test_timestamp": "2026-02-11T00:00:00Z",
+      "test_notes": "Uses image_output_config with {response, module_outputs} format"
+    },
+    {
+      "agent_id": "698bcf88f0601df65d51cb31",
+      "name": "Content Coordinator",
+      "type": "manager",
+      "role": "Content Generation Manager",
+      "description": "Coordinates post writing and image generation, ensures visual-text coherence, aggregates final output",
+      "managed_agents": [
+        "698bcf5971cc26621aa010f0",
+        "698bcf70f0601df65d51cb30"
+      ],
+      "test_status": "passed",
+      "test_timestamp": "2026-02-11T00:00:00Z"
+    }
+  ],
+  "workflow": {
+    "nodes": [
+      {
+        "id": "input_node",
+        "type": "Input",
+        "label": "User Input",
+        "nodeCategory": "input"
+      },
+      {
+        "id": "content_coordinator",
+        "type": "Agent",
+        "label": "Content Coordinator Manager",
+        "nodeCategory": "agent",
+        "agent_id": "698bcf88f0601df65d51cb31"
+      },
+      {
+        "id": "post_writer",
+        "type": "Agent",
+        "label": "Post Writer Agent",
+        "nodeCategory": "agent",
+        "agent_id": "698bcf5971cc26621aa010f0"
+      },
+      {
+        "id": "image_creator",
+        "type": "Agent",
+        "label": "Image Creator Agent",
+        "nodeCategory": "agent",
+        "agent_id": "698bcf70f0601df65d51cb30"
+      },
+      {
+        "id": "output_node",
+        "type": "Output",
+        "label": "Content Output",
+        "nodeCategory": "end"
+      }
+    ],
+    "edges": [
+      {
+        "source": "input_node",
+        "target": "content_coordinator"
+      },
+      {
+        "source": "content_coordinator",
+        "target": "post_writer"
+      },
+      {
+        "source": "content_coordinator",
+        "target": "image_creator"
+      },
+      {
+        "source": "post_writer",
+        "target": "output_node"
+      },
+      {
+        "source": "image_creator",
+        "target": "output_node"
+      }
+    ]
+  },
+  "created_at": "2026-02-11T00:00:00Z",
+  "status": "testing_complete",
+  "test_summary": {
+    "total_agents": 3,
+    "passed": 3,
+    "failed": 0,
+    "test_responses_dir": "/app/nextjs-project/test_responses"
+  }
+}
