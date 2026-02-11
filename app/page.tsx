@@ -12,10 +12,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Loader2, Send, Copy, Download, RefreshCw, Check, Sparkles, Image as ImageIcon, FileText } from 'lucide-react'
 
-// Agent IDs
-const CONTENT_COORDINATOR_ID = '698bcf88f0601df65d51cb31'
-const POST_WRITER_ID = '698bcf5971cc26621aa010f0'
-const IMAGE_CREATOR_ID = '698bcf70f0601df65d51cb30'
+// LinkedIn Post Generator Agent (Image Output Agent)
+const LINKEDIN_POST_GENERATOR_ID = '698c546864884e9215195880'
 
 // Theme colors - Sunset theme
 const THEME_VARS = {
@@ -41,60 +39,37 @@ const THEME_VARS = {
   '--radius': '0.875rem',
 } as React.CSSProperties
 
-// TypeScript interfaces
-interface ContentCoordinatorResponse {
+// TypeScript interfaces for LinkedIn Post Generator response
+interface LinkedInPostGeneratorResponse {
   status: string
   result: {
-    summary: string
-    data: {
-      linkedin_post: string
-      image_description: string
-      image_url: string
-      tone_used: string
-      style_used: string
-      coherence_notes: string
-    }
+    summary?: string
+    post_text?: string
+    hashtags?: string[]
+    word_count?: number
+    tone_used?: string
+    image_description?: string
+    engagement_tips?: string[]
+    text?: string
   }
-  metadata: {
-    agent_name: string
-    timestamp: string
-  }
-}
-
-interface PostWriterResponse {
-  status: string
-  result: {
-    summary: string
-    data: {
-      post_text: string
-      character_count: number
-      tone: string
-      hashtags: string[]
-    }
-  }
-  metadata: {
-    agent_name: string
-    timestamp: string
-  }
-}
-
-interface ImageCreatorResponse {
-  response: string
-  module_outputs: {
-    image_output: {
-      image_url: string
-      image_description: string
-    }
+  message?: string
+  module_outputs?: {
+    artifact_files?: Array<{
+      file_url: string
+      name?: string
+      format_type?: string
+    }>
   }
 }
 
 const TONES = ['Professional', 'Inspirational', 'Educational', 'Conversational', 'Bold']
-const IMAGE_STYLES = ['Minimal', 'Abstract', 'Illustrated', 'Photo-realistic']
+const POST_LENGTHS = ['Short', 'Medium', 'Long']
 
 const LINKEDIN_CHAR_LIMIT = 3000
 
 // Sample data for demonstration
 const SAMPLE_TOPIC = "Launching my new AI-powered productivity tool for remote teams that helps automate daily standup meetings, track project progress, and generate insights from team communication patterns."
+const SAMPLE_KEY_POINTS = "- Automates daily standups\n- Tracks project milestones\n- Generates team insights\n- Integrates with Slack and Teams"
 const SAMPLE_POST = "Today marks a milestone in my journey—I'm thrilled to announce the launch of my new AI-powered productivity tool designed specifically for remote teams!\n\nWhen the world shifted to remote work, collaboration and productivity found new challenges. I saw talented teams struggle to stay aligned and organized, even as they worked tirelessly from different corners of the globe. This sparked a vision—to create an AI tool that not only streamlines workflows but truly *empowers* teams to reach their highest potential, no matter where they are.\n\nOur tool leverages the latest in artificial intelligence to automate repetitive tasks, surface insights from daily communications, and foster seamless collaboration. The goal? To give every team member more time for what matters: creative problem-solving, meaningful connections, and delivering results.\n\nI believe the future of work is not just remote, but *connected, intelligent, and human-centric*. With the right technology, we can make distributed teamwork more effective—and more fulfilling—than ever before.\n\nI'd love to hear from you:\nHow do you see AI changing the way your team works? What features would make a real difference for you?\n\nLet's start a conversation and redefine productivity together.\n\n#AI #RemoteWork #Productivity #Innovation #FutureOfWork"
 const SAMPLE_IMAGE_URL = "https://url-shortner.studio.lyzr.ai/87e71c4e"
 
@@ -118,20 +93,20 @@ function ToneSelector({ selected, onSelect }: { selected: string; onSelect: (ton
   )
 }
 
-function ImageStyleSelector({ selected, onSelect }: { selected: string; onSelect: (style: string) => void }) {
+function PostLengthSelector({ selected, onSelect }: { selected: string; onSelect: (length: string) => void }) {
   return (
-    <div className="flex flex-wrap gap-2">
-      {IMAGE_STYLES.map((style) => (
+    <div className="flex gap-2">
+      {POST_LENGTHS.map((length) => (
         <button
-          key={style}
-          onClick={() => onSelect(style)}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-            selected === style
-              ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105'
-              : 'bg-secondary/50 text-foreground hover:bg-secondary hover:scale-105'
+          key={length}
+          onClick={() => onSelect(length)}
+          className={`flex-1 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+            selected === length
+              ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+              : 'bg-secondary/50 text-foreground hover:bg-secondary'
           }`}
         >
-          {style}
+          {length}
         </button>
       ))}
     </div>
@@ -193,15 +168,15 @@ function PostPreview({ text, onCopy }: { text: string; onCopy: () => void }) {
 
 export default function Home() {
   const [topic, setTopic] = useState('')
+  const [keyPoints, setKeyPoints] = useState('')
   const [selectedTone, setSelectedTone] = useState('Professional')
-  const [selectedStyle, setSelectedStyle] = useState('Minimal')
+  const [selectedLength, setSelectedLength] = useState('Medium')
+  const [includeImage, setIncludeImage] = useState(true)
   const [generatedPost, setGeneratedPost] = useState<string | null>(null)
   const [generatedImage, setGeneratedImage] = useState<string | null>(null)
   const [imageDescription, setImageDescription] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [isRegeneratingPost, setIsRegeneratingPost] = useState(false)
-  const [isRegeneratingImage, setIsRegeneratingImage] = useState(false)
-  const [activeAgent, setActiveAgent] = useState<string | null>(null)
+  const [imageError, setImageError] = useState(false)
   const [useSampleData, setUseSampleData] = useState(false)
   const [sessionId, setSessionId] = useState<string>('')
 
@@ -211,18 +186,24 @@ export default function Home() {
   useEffect(() => {
     if (useSampleData) {
       setTopic(SAMPLE_TOPIC)
+      setKeyPoints(SAMPLE_KEY_POINTS)
       setSelectedTone('Inspirational')
-      setSelectedStyle('Abstract')
+      setSelectedLength('Medium')
+      setIncludeImage(true)
       setGeneratedPost(SAMPLE_POST)
       setGeneratedImage(SAMPLE_IMAGE_URL)
       setImageDescription('Abstract visual representing AI-powered productivity for remote teams—dynamic interconnected shapes, vibrant energy flows symbolizing collaboration, innovation, and digital progress.')
+      setImageError(false)
     } else {
       setTopic('')
+      setKeyPoints('')
       setSelectedTone('Professional')
-      setSelectedStyle('Minimal')
+      setSelectedLength('Medium')
+      setIncludeImage(true)
       setGeneratedPost(null)
       setGeneratedImage(null)
       setImageDescription(null)
+      setImageError(false)
     }
   }, [useSampleData])
 
@@ -233,37 +214,55 @@ export default function Home() {
     if (!topic.trim()) return
 
     setIsGenerating(true)
-    setActiveAgent('Content Coordinator')
     setGeneratedPost(null)
     setGeneratedImage(null)
     setImageDescription(null)
+    setImageError(false)
 
     try {
       // Generate session ID and connect to activity stream
-      const newSessionId = generateSessionId(CONTENT_COORDINATOR_ID)
+      const newSessionId = generateSessionId(LINKEDIN_POST_GENERATOR_ID)
       setSessionId(newSessionId)
       connect(newSessionId)
 
-      const message = `Generate LinkedIn content for: Topic: ${topic}. Tone: ${selectedTone}. Image Style: ${selectedStyle}.`
+      // Build prompt with all parameters
+      let message = `Create a LinkedIn post about: ${topic}.`
+      if (keyPoints.trim()) {
+        message += ` Key points to include: ${keyPoints}.`
+      }
+      message += ` Tone: ${selectedTone}. Length: ${selectedLength}.`
+      if (includeImage) {
+        message += ` Include a professional image.`
+      }
 
-      const result = await callAIAgent(message, CONTENT_COORDINATOR_ID, {
+      const result = await callAIAgent(message, LINKEDIN_POST_GENERATOR_ID, {
         session_id: newSessionId
       })
 
       if (result.success && result.response) {
-        const data = result.response as ContentCoordinatorResponse
+        const data = result.response as LinkedInPostGeneratorResponse
 
-        if (data?.result?.data) {
-          setGeneratedPost(data.result.data.linkedin_post || '')
-          setGeneratedImage(data.result.data.image_url || '')
-          setImageDescription(data.result.data.image_description || '')
+        // Extract post text - try multiple possible locations
+        const postText = data?.result?.post_text ?? data?.result?.text ?? data?.message ?? ''
+
+        // Strip inline markdown images from text
+        const cleanText = postText.replace(/!\[.*?\]\(.*?\)/g, '').trim()
+        setGeneratedPost(cleanText)
+
+        // Extract image from module_outputs (top level, not inside result)
+        const files = Array.isArray(result?.module_outputs?.artifact_files)
+          ? result.module_outputs.artifact_files
+          : []
+
+        if (files.length > 0 && files[0]?.file_url) {
+          setGeneratedImage(files[0].file_url)
+          setImageDescription(files[0].name || data?.result?.image_description || 'Generated LinkedIn image')
         }
       }
     } catch (error) {
       console.error('Content generation failed:', error)
     } finally {
       setIsGenerating(false)
-      setActiveAgent(null)
       setTimeout(() => disconnect(), 2000)
     }
   }
@@ -271,53 +270,28 @@ export default function Home() {
   const handleRegeneratePost = async () => {
     if (!topic.trim()) return
 
-    setIsRegeneratingPost(true)
-    setActiveAgent('Post Writer Agent')
+    setIsGenerating(true)
+    setGeneratedPost(null)
 
     try {
-      const message = `Create a LinkedIn post about ${topic}. Tone: ${selectedTone}.`
+      let message = `Create a LinkedIn post about: ${topic}.`
+      if (keyPoints.trim()) {
+        message += ` Key points: ${keyPoints}.`
+      }
+      message += ` Tone: ${selectedTone}. Length: ${selectedLength}.`
 
-      const result = await callAIAgent(message, POST_WRITER_ID)
+      const result = await callAIAgent(message, LINKEDIN_POST_GENERATOR_ID)
 
       if (result.success && result.response) {
-        const data = result.response as PostWriterResponse
-
-        if (data?.result?.data?.post_text) {
-          setGeneratedPost(data.result.data.post_text)
-        }
+        const data = result.response as LinkedInPostGeneratorResponse
+        const postText = data?.result?.post_text ?? data?.result?.text ?? data?.message ?? ''
+        const cleanText = postText.replace(/!\[.*?\]\(.*?\)/g, '').trim()
+        setGeneratedPost(cleanText)
       }
     } catch (error) {
       console.error('Post regeneration failed:', error)
     } finally {
-      setIsRegeneratingPost(false)
-      setActiveAgent(null)
-    }
-  }
-
-  const handleRegenerateImage = async () => {
-    if (!topic.trim()) return
-
-    setIsRegeneratingImage(true)
-    setActiveAgent('Image Creator Agent')
-
-    try {
-      const message = `Generate a professional LinkedIn image with ${selectedStyle} style representing ${topic}. Use vibrant but professional colors suitable for LinkedIn.`
-
-      const result = await callAIAgent(message, IMAGE_CREATOR_ID)
-
-      if (result.success && result.response) {
-        const data = result.response as ImageCreatorResponse
-
-        if (data?.module_outputs?.image_output?.image_url) {
-          setGeneratedImage(data.module_outputs.image_output.image_url)
-          setImageDescription(data.module_outputs.image_output.image_description || '')
-        }
-      }
-    } catch (error) {
-      console.error('Image regeneration failed:', error)
-    } finally {
-      setIsRegeneratingImage(false)
-      setActiveAgent(null)
+      setIsGenerating(false)
     }
   }
 
@@ -347,10 +321,10 @@ export default function Home() {
           <div>
             <h1 className="text-4xl font-bold text-foreground tracking-tight mb-2 flex items-center gap-3">
               <Sparkles className="w-8 h-8 text-primary" />
-              LinkedIn Content Studio
+              LinkedIn Post Generator
             </h1>
             <p className="text-muted-foreground text-sm">
-              AI-powered post and image generation for professional LinkedIn content
+              Create engaging LinkedIn posts with AI-generated images in seconds
             </p>
           </div>
 
@@ -389,14 +363,27 @@ export default function Home() {
                 <Textarea
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="Enter your LinkedIn post topic or idea here..."
-                  className="min-h-[180px] bg-background/50 border-border resize-none text-sm"
+                  placeholder="e.g., Announcing my startup launch, sharing industry insights, celebrating a team milestone..."
+                  className="min-h-[120px] bg-background/50 border-border resize-none text-sm"
                   disabled={isGenerating}
                 />
-                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Share your thoughts, announcements, or insights</span>
-                  <span>{topic.length} characters</span>
-                </div>
+              </CardContent>
+            </Card>
+
+            {/* Key Points Input */}
+            <Card className="bg-card/80 backdrop-blur-lg border-border/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-lg">Key Points (Optional)</CardTitle>
+                <CardDescription>Add bullet points or highlights to include</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={keyPoints}
+                  onChange={(e) => setKeyPoints(e.target.value)}
+                  placeholder="- Point 1&#10;- Point 2&#10;- Point 3"
+                  className="min-h-[100px] bg-background/50 border-border resize-none text-sm font-mono"
+                  disabled={isGenerating}
+                />
               </CardContent>
             </Card>
 
@@ -411,17 +398,45 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            {/* Image Style Selector */}
+            {/* Post Length Selector */}
+            <Card className="bg-card/80 backdrop-blur-lg border-border/50 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-lg">Post Length</CardTitle>
+                <CardDescription>Choose your preferred length</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PostLengthSelector selected={selectedLength} onSelect={setSelectedLength} />
+              </CardContent>
+            </Card>
+
+            {/* Include Image Toggle */}
             <Card className="bg-card/80 backdrop-blur-lg border-border/50 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
-                  Image Style
+                  Include Image
                 </CardTitle>
-                <CardDescription>Choose the visual style for your image</CardDescription>
+                <CardDescription>Generate an AI-powered visual for your post</CardDescription>
               </CardHeader>
               <CardContent>
-                <ImageStyleSelector selected={selectedStyle} onSelect={setSelectedStyle} />
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setIncludeImage(!includeImage)}
+                    disabled={isGenerating}
+                    className={`relative w-11 h-6 rounded-full transition-all duration-200 ${
+                      includeImage ? 'bg-primary' : 'bg-muted'
+                    } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div
+                      className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 ${
+                        includeImage ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-sm text-foreground">
+                    {includeImage ? 'Image enabled' : 'Image disabled'}
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
@@ -434,30 +449,28 @@ export default function Home() {
               {isGenerating ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Generating Content...
+                  Generating Post...
                 </>
               ) : (
                 <>
                   <Send className="w-5 h-5 mr-2" />
-                  Generate Content
+                  Generate Post
                 </>
               )}
             </Button>
 
             {/* Agent Status */}
-            {(isGenerating || isRegeneratingPost || isRegeneratingImage) && (
+            {isGenerating && (
               <Card className="bg-accent/10 backdrop-blur-lg border-accent/30 shadow-md">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
                     <Loader2 className="w-5 h-5 text-accent animate-spin" />
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        {activeAgent || 'Processing'}
+                        LinkedIn Post Generator
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {isGenerating && 'Coordinating content generation...'}
-                        {isRegeneratingPost && 'Writing new post...'}
-                        {isRegeneratingImage && 'Creating new image...'}
+                        Creating your post and image...
                       </p>
                     </div>
                   </div>
@@ -477,7 +490,7 @@ export default function Home() {
                 <CardContent>
                   <ActivityPanel
                     events={events}
-                    activeAgent={activeAgent}
+                    activeAgent="LinkedIn Post Generator"
                     status={streamStatus}
                     isConnected={isConnected}
                   />
@@ -490,10 +503,10 @@ export default function Home() {
           <div className="lg:col-span-3">
             <Card className="bg-card/80 backdrop-blur-lg border-border/50 shadow-xl h-full">
               <CardHeader>
-                <CardTitle className="text-lg">Content Preview</CardTitle>
+                <CardTitle className="text-lg">Post Preview</CardTitle>
                 <CardDescription>
                   {generatedPost || generatedImage
-                    ? 'Your generated LinkedIn content is ready'
+                    ? 'Your LinkedIn content is ready to publish'
                     : 'Generated content will appear here'}
                 </CardDescription>
               </CardHeader>
@@ -508,8 +521,8 @@ export default function Home() {
                         Ready to Create
                       </h3>
                       <p className="text-sm text-muted-foreground max-w-md">
-                        Enter your topic, select tone and image style, then click Generate Content to create
-                        professional LinkedIn posts with matching visuals.
+                        Enter your topic, configure your preferences, then click Generate Post to create
+                        professional LinkedIn content with AI-generated visuals.
                       </p>
                     </div>
                   )}
@@ -517,7 +530,7 @@ export default function Home() {
                   {(generatedPost || generatedImage) && (
                     <div className="space-y-6">
                       {/* Generated Image */}
-                      {generatedImage && (
+                      {generatedImage && !imageError && (
                         <div className="space-y-3">
                           <div className="relative overflow-hidden rounded-2xl bg-muted/30">
                             <img
@@ -525,6 +538,7 @@ export default function Home() {
                               alt={imageDescription || 'Generated LinkedIn image'}
                               className="w-full h-auto object-cover"
                               style={{ aspectRatio: '1200/627' }}
+                              onError={() => setImageError(true)}
                             />
                           </div>
                           {imageDescription && (
@@ -533,7 +547,14 @@ export default function Home() {
                         </div>
                       )}
 
-                      <Separator />
+                      {generatedImage && imageError && (
+                        <div className="p-8 bg-muted/20 rounded-2xl border border-border/50 text-center">
+                          <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                          <p className="text-sm text-muted-foreground">Image failed to load</p>
+                        </div>
+                      )}
+
+                      {generatedImage && <Separator />}
 
                       {/* Generated Post */}
                       {generatedPost && (
@@ -568,64 +589,44 @@ export default function Home() {
                           <Separator />
                           <div className="grid grid-cols-2 gap-3">
                             {generatedPost && (
-                              <>
-                                <Button
-                                  onClick={handleCopyPost}
-                                  variant="secondary"
-                                  className="w-full"
-                                >
-                                  <Copy className="w-4 h-4 mr-2" />
-                                  Copy Text
-                                </Button>
-                                <Button
-                                  onClick={handleRegeneratePost}
-                                  variant="secondary"
-                                  className="w-full"
-                                  disabled={isRegeneratingPost || !topic.trim()}
-                                >
-                                  {isRegeneratingPost ? (
-                                    <>
-                                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                      Regenerating...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <RefreshCw className="w-4 h-4 mr-2" />
-                                      Regenerate Post
-                                    </>
-                                  )}
-                                </Button>
-                              </>
+                              <Button
+                                onClick={handleCopyPost}
+                                variant="secondary"
+                                className="w-full"
+                              >
+                                <Copy className="w-4 h-4 mr-2" />
+                                Copy Text
+                              </Button>
                             )}
-                            {generatedImage && (
-                              <>
-                                <Button
-                                  onClick={handleDownloadImage}
-                                  variant="secondary"
-                                  className="w-full"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download Image
-                                </Button>
-                                <Button
-                                  onClick={handleRegenerateImage}
-                                  variant="secondary"
-                                  className="w-full"
-                                  disabled={isRegeneratingImage || !topic.trim()}
-                                >
-                                  {isRegeneratingImage ? (
-                                    <>
-                                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                      Regenerating...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <RefreshCw className="w-4 h-4 mr-2" />
-                                      Regenerate Image
-                                    </>
-                                  )}
-                                </Button>
-                              </>
+                            {generatedImage && !imageError && (
+                              <Button
+                                onClick={handleDownloadImage}
+                                variant="secondary"
+                                className="w-full"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download Image
+                              </Button>
+                            )}
+                            {generatedPost && (
+                              <Button
+                                onClick={handleRegeneratePost}
+                                variant="secondary"
+                                className="w-full"
+                                disabled={isGenerating || !topic.trim()}
+                              >
+                                {isGenerating ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Regenerating...
+                                  </>
+                                ) : (
+                                  <>
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Regenerate Post
+                                  </>
+                                )}
+                              </Button>
                             )}
                           </div>
                         </>
@@ -642,19 +643,9 @@ export default function Home() {
         <Card className="mt-6 bg-card/60 backdrop-blur-sm border-border/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full" />
-                  <span>Content Coordinator (Manager)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-secondary rounded-full" />
-                  <span>Post Writer Agent</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-accent rounded-full" />
-                  <span>Image Creator Agent</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full" />
+                <span>LinkedIn Post Generator Agent (ID: {LINKEDIN_POST_GENERATOR_ID.substring(0, 12)}...)</span>
               </div>
               <span>Powered by Lyzr AI Agents</span>
             </div>

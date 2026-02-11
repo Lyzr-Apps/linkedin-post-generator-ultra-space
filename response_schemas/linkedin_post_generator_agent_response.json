@@ -1,0 +1,31 @@
+{
+  "agent_name": "LinkedIn Post Generator Agent",
+  "agent_id": "698c546864884e9215195880",
+  "agent_purpose": "Generates engaging LinkedIn posts with AI-generated images based on topic, key points, tone, and length preferences",
+  "description": "Tests the LinkedIn Post Generator with a professional topic about AI and work, expecting post text with hashtags and a matching professional image",
+  "response_schema": {
+    "post_text": "string",
+    "image_url": "string"
+  },
+  "example_response": {
+    "post_text": "\ud83d\ude80 5 Tips for Effective Remote Team Collaboration \ud83d\ude80\n\n1\ufe0f\u20e3 Choose the Right Communication Tools: Use platforms like Slack, Zoom, or Teams to keep everyone connected and information flowing.\n\n2\ufe0f\u20e3 Embrace Asynchronous Work: Encourage team members to share updates and tasks in shared docs or project boards so progress doesn't depend on syncing schedules.\n\n3\ufe0f\u20e3 Set Clear Expectations: Define roles, responsibilities, and deadlines to keep everyone aligned, regardless of location.\n\n4\ufe0f\u20e3 Schedule Regular Check-ins: Brief stand-up meetings foster accountability and give space to address blockers.\n\n5\ufe0f\u20e3 Prioritize Team Building: Plan virtual coffee breaks or games to build trust and keep morale high.\n\nRemote success is built on strong, intentional collaboration! \n\nHow does your team stay connected across distances?\n\n#RemoteWork #TeamCollaboration #AsyncWork #DigitalTeams #Leadership",
+    "image_url": "https://url-shortner.studio.lyzr.ai/ad7258c4"
+  },
+  "actual_test_response": {
+    "post_text": "\ud83d\ude80 5 Tips for Effective Remote Team Collaboration \ud83d\ude80\n\n1\ufe0f\u20e3 Choose the Right Communication Tools: Use platforms like Slack, Zoom, or Teams to keep everyone connected and information flowing.\n\n2\ufe0f\u20e3 Embrace Asynchronous Work: Encourage team members to share updates and tasks in shared docs or project boards so progress doesn't depend on syncing schedules.\n\n3\ufe0f\u20e3 Set Clear Expectations: Define roles, responsibilities, and deadlines to keep everyone aligned, regardless of location.\n\n4\ufe0f\u20e3 Schedule Regular Check-ins: Brief stand-up meetings foster accountability and give space to address blockers.\n\n5\ufe0f\u20e3 Prioritize Team Building: Plan virtual coffee breaks or games to build trust and keep morale high.\n\nRemote success is built on strong, intentional collaboration! \n\nHow does your team stay connected across distances?\n\n#RemoteWork #TeamCollaboration #AsyncWork #DigitalTeams #Leadership",
+    "image_url": "https://url-shortner.studio.lyzr.ai/ad7258c4"
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-11T10:07:53.891173",
+  "test_message_used": "Hello, provide a sample response",
+  "module_outputs": {
+    "artifact_files": [
+      {
+        "file_url": "https://url-shortner.studio.lyzr.ai/ad7258c4",
+        "name": "Generated Image",
+        "format_type": "image"
+      }
+    ]
+  },
+  "test_passed": false
+}
